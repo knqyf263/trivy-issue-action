@@ -1,0 +1,12 @@
+name: test
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install shfmt
+        run: sudo snap install shfmt
+      - name: Run shfmt
+        run: shfmt -d entrypoint.sh

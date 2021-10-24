@@ -1,0 +1,28 @@
+name: "Trivy GitHub Issues"
+description: "Create GitHub Issues according to the Trivy result"
+inputs:
+  label:
+    description: "The label name"
+    required: false
+    default: "vulnerability"
+  severity:
+    description: "Severities of vulnerabilities"
+    required: false
+    default: "CRITICAL"
+runs:
+  using: "composite"
+  steps:
+    - name: Run Trivy vulnerability scanner in repo mode
+      uses: aquasecurity/trivy-action@0.0.20
+      with:
+        scan-type: "fs"
+        ignore-unfixed: true
+        format: "json"
+        output: "result.json"
+        severity: ${{ inputs.severity }}
+    - name: Create GitHub Issues
+      run: ${{ github.action_path }}/entrypoint.sh
+      shell: bash
+      env:
+        INPUT_LABEL: ${{ inputs.label }}
+        INPUT_FILENAME: "result.json"

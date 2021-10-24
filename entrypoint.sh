@@ -1,0 +1,75 @@
+#!/bin/bash
+
+if [ -z "$INPUT_LABEL" ]; then
+    echo "INPUT_LABEL must be set."
+    exit 1
+fi
+
+if [ -z "$INPUT_FILENAME" ]; then
+    echo "INPUT_FILENAME must be set."
+    exit 1
+fi
+
+if [ -z "$GITHUB_REPOSITORY" ]; then
+    echo "GITHUB_REPOSITORY must be set."
+    exit 1
+fi
+
+issues=$(gh --repo "$GITHUB_REPOSITORY" issue list --label vulnerability --json title --jq '.[].title')
+
+json_file=$(cat "$INPUT_FILENAME")
+target_length=$(echo "$json_file" | jq length)
+
+# Iterate targets
+for i in $(seq 0 $((target_length - 1))); do
+    vuln_length=$(echo "$json_file" | jq ".[$i].Vulnerabilities | length")
+
+    # Iterate vulnerabilities
+    for j in $(seq 0 $((vuln_length - 1))); do
+        vuln=$(echo "$json_file" | jq ".[$i].Vulnerabilities[$j]")
+
+        vuln_id=$(echo "$vuln" | jq -r ".VulnerabilityID")
+        pkg_name=$(echo "$vuln" | jq -r ".PkgName")
+
+        issue_title="$pkg_name: $vuln_id"
+        echo "Processing $issue_title..."
+
+        # Skip creating a new issue when the issue is already created
+        if echo "$issues" | grep -q "^$issue_title$"; then
+            echo "Already exists"
+            continue
+        fi
+
+        title=$(echo "$vuln" | jq -r ".Title // empty")
+        : ${title:='N/A'}
+
+        description=$(echo "$vuln" | jq -r ".Description")
+        severity=$(echo "$vuln" | jq -r ".Severity")
+        primary_url=$(echo "$vuln" | jq -r ".PrimaryURL")
+        references=$(echo "$vuln" | jq -r ".References | join(\"\n- \")")
+        references="- ${references}" # for bullet points in markdown
+
+        body=$(
+            cat << EOF | envsubst
+## Title
+${title}
+
+## Description
+${description}
+
+## Severity
+${severity}
+
+## Primary URL
+${primary_url}
+
+## References
+${references}
+EOF
+        )
+
+        # Create a new issue
+        gh --repo "$GITHUB_REPOSITORY" issue create --title "$issue_title" --body "$body" --label "$INPUT_LABEL"
+        echo ""
+    done
+done
