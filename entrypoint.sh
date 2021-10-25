@@ -15,7 +15,7 @@ if [ -z "$GITHUB_REPOSITORY" ]; then
     exit 1
 fi
 
-issues=$(gh --repo "$GITHUB_REPOSITORY" issue list --label vulnerability --json title --jq '.[].title')
+issues=$(gh --repo "$GITHUB_REPOSITORY" issue list --label "$INPUT_LABEL" --json title --jq '.[].title')
 
 json_file=$(cat "$INPUT_FILENAME")
 target_length=$(echo "$json_file" | jq length)
@@ -73,3 +73,13 @@ EOF
         echo ""
     done
 done
+
+# Associate issues with the specified project
+if [ -n "$INPUT_PROJECT_ID" ]; then
+    echo "Creating cards in the project $INPUT_PROJECT_ID..."
+    issue_numbers=$(gh --repo "$GITHUB_REPOSITORY" issue list --label "$INPUT_LABEL" --json number --jq '.[].number')
+    echo "$issue_numbers" | while read -r number; do
+        issue_id=$(gh api /repos/${GITHUB_REPOSITORY}/issues/${number} --jq .id)
+        gh api /projects/columns/${INPUT_PROJECT_ID}/cards -F content_id=$issue_id -F content_type="Issue"
+    done
+fi
