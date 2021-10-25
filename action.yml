@@ -9,6 +9,9 @@ inputs:
     description: "Severities of vulnerabilities"
     required: false
     default: "CRITICAL"
+  assignee:
+    description: "Assignee"
+    required: false
   project-id:
     description: "GitHub Project ID"
     required: false
@@ -28,5 +31,6 @@ runs:
       shell: bash
       env:
         INPUT_LABEL: ${{ inputs.label }}
+        INPUT_ASSIGNEE: ${{ inputs.assignee }}
         INPUT_PROJECT_ID: ${{ inputs.project-id }}
         INPUT_FILENAME: "result.json"

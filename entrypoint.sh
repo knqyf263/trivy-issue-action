@@ -68,8 +68,12 @@ ${references}
 EOF
         )
 
+        if [ -n "$INPUT_ASSIGNEE" ]; then
+            assignee="--assignee $INPUT_ASSIGNEE"
+        fi
+
         # Create a new issue
-        gh --repo "$GITHUB_REPOSITORY" issue create --title "$issue_title" --body "$body" --label "$INPUT_LABEL"
+        gh --repo "$GITHUB_REPOSITORY" issue create --title "$issue_title" --body "$body" --label "$INPUT_LABEL" $assignee
         echo ""
     done
 done
