@@ -19,7 +19,7 @@ runs:
   using: "composite"
   steps:
     - name: Run Trivy vulnerability scanner in repo mode
-      uses: aquasecurity/trivy-action@0.0.20
+      uses: aquasecurity/trivy-action@0.2.2
       with:
         scan-type: "fs"
         ignore-unfixed: true
