@@ -9,6 +9,10 @@ inputs:
     description: "Severities of vulnerabilities"
     required: false
     default: "CRITICAL"
+  skip-dirs:
+    description: "comma separated list of directories where traversal is skipped"
+    required: false
+    default: ""
   assignee:
     description: "Assignee"
     required: false
@@ -26,6 +30,7 @@ runs:
         format: "json"
         output: "result.json"
         severity: ${{ inputs.severity }}
+        skip-dirs: ${{ inputs.skip-dirs }}
     - name: Create GitHub Issues
       run: ${{ github.action_path }}/entrypoint.sh
       shell: bash

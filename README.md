@@ -7,7 +7,7 @@ In this action, [Trivy](https://github.com/aquasecurity/trivy) scans the depende
 ## Usage
 
 ```
-- uses: knqyf263/trivy-issue-action@v0.0.1
+- uses: knqyf263/trivy-issue-action@v0.0.2
   with:
     # Label name
     # Default: vulnerability (this label must be created in advance)
@@ -16,6 +16,11 @@ In this action, [Trivy](https://github.com/aquasecurity/trivy) scans the depende
     # Severities of vulnerabilities to be registered to GitHub Issues
     # Default: 'CRITICAL'
     severity: ''
+    
+    # Comma separated list of directories where traversal is skipped
+    # Default: ''
+    # Example: 'tests, integration-tests'
+    skip-dirs: ''
 
     # Assignees
     # Default: ''

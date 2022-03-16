@@ -22,11 +22,11 @@ target_length=$(echo "$json_file" | jq length)
 
 # Iterate targets
 for i in $(seq 0 $((target_length - 1))); do
-    vuln_length=$(echo "$json_file" | jq ".[$i].Vulnerabilities | length")
+    vuln_length=$(echo "$json_file" | jq ".Results[$i].Vulnerabilities | length")
 
     # Iterate vulnerabilities
     for j in $(seq 0 $((vuln_length - 1))); do
-        vuln=$(echo "$json_file" | jq ".[$i].Vulnerabilities[$j]")
+        vuln=$(echo "$json_file" | jq ".Results[$i].Vulnerabilities[$j]")
 
         vuln_id=$(echo "$vuln" | jq -r ".VulnerabilityID")
         pkg_name=$(echo "$vuln" | jq -r ".PkgName")
