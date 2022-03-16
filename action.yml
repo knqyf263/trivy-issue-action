@@ -30,7 +30,7 @@ runs:
         format: "json"
         output: "result.json"
         severity: ${{ inputs.severity }}
-        skip-dirs: integration,examples
+        skip-dirs: ${{ inputs.skip-dirs }}
     - name: Create GitHub Issues
       run: ${{ github.action_path }}/entrypoint.sh
       shell: bash
