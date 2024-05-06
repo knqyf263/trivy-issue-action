@@ -7,7 +7,7 @@ In this action, [Trivy](https://github.com/aquasecurity/trivy) scans the depende
 ## Usage
 
 ```
-- uses: knqyf263/trivy-issue-action@v0.0.5
+- uses: knqyf263/trivy-issue-action@v0.0.6
   with:
     # Label name
     # Default: vulnerability (this label must be created in advance)
